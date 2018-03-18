@@ -160,7 +160,7 @@ class Field:
             line = (str(i + 1) + " ")[:2] + "| " + functools.reduce(lambda x, y: x + " | " + y, self.str_field[i]) + " |"
             print(line)
             print(line_separator)
-   
+
     def check_win(self):
         for ship in self.ships:
             if ship.life > 0:
@@ -237,11 +237,11 @@ class Game():
 
         self.players = [player1, player2]
 
-        # field1 = Field(FIELD_SIZE, player1, SHIP1, SHIP2, SHIP3, SHIP4)
-        # field2 = Field(FIELD_SIZE, player2, SHIP1, SHIP2, SHIP3, SHIP4)
+        field1 = Field(FIELD_SIZE, player1, SHIP1, SHIP2, SHIP3, SHIP4)
+        field2 = Field(FIELD_SIZE, player2, SHIP1, SHIP2, SHIP3, SHIP4)
 
-        field1 = Field(FIELD_SIZE, player1, 0, 2)
-        field2 = Field(FIELD_SIZE, player2, 0, 2)
+        # field1 = Field(FIELD_SIZE, player1, 0, 2)
+        # field2 = Field(FIELD_SIZE, player2, 0, 2)
 
         self.fields = [field1, field2]
 
