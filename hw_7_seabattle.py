@@ -29,7 +29,7 @@ class Player:
     def get_shot(self):
         while True:
             try:
-                xy = input("{}, введите координаты выстрела <X Y> ".format(self.name))
+                xy = input("{}, введите координаты выстрела <X Y>: ".format(self.name))
                 x, y = list(map(int, xy.split()))
             except Exception:
                 print("Введите корректные координаты")
@@ -41,7 +41,7 @@ class Player:
     def get_ship_position(self, deck):
         while True:
             try:
-                xy = input("{}, введите позицию {}-палубного корабля <X1, Y1, X2, Y2> ".format(self.name, deck))
+                xy = input("{}, введите позицию {}-палубного корабля <X1, Y1, X2, Y2>: ".format(self.name, deck))
                 begin_x, begin_y, end_x, end_y = list(map(int, xy.split()))
                 if (begin_x != end_x) and (begin_y != end_y) and deck != 1:
                     raise ShipPositionException("Корабль может располагаться только вертикально или горизонтально")
@@ -175,12 +175,13 @@ class Field:
         else:
             shot.set_hit(True)
             ship.hitting()
+
             if ship.life == 0 and AUTO_EMPTY_SHOT:
                 for x in range(ship.begin_x, ship.end_x + 1):
                     for y in range(ship.begin_y, ship.end_y + 1):
                         for dx in range(-1, 2):
                             for dy in range(-1, 2):
-                                if dx != 0 and dy !=0:
+                                if dx != 0 or dy !=0:
                                     empty_x = x + dx
                                     empty_y = y + dy
                                     if (ship.begin_x <= empty_x <= ship.end_x) and \
@@ -192,7 +193,7 @@ class Field:
                                     self.add_shot(auto_empty_shot)
 
         self.add_hit_to_print(shot)
-        return shot.hit
+        return ship
 
 
 class Ship:
@@ -223,14 +224,14 @@ class Shot():
         self.hit = hit
         # field.check_hit(x, y)
 
-    def __contains__(self, item):
-        return (self.x == item.x) and (self.y == item.y)
+    def __eq__(self, other):
+        return (self.x == other.x) and (self.y == other.y)
 
 
 class Game():
     def __init__(self):
-        player1 = Player("Игрок1")
-        player2 = Player("Игрок2")
+        player1 = Player(input("Игрок 1, введите имя: "))
+        player2 = Player(input("Игрок 2, введите имя: "))
 
         self.players = [player1, player2]
 
@@ -271,23 +272,35 @@ class Game():
                 if not(1 <= y <= field.size):
                     raise ShotPositionException("Координаты выходят за пределы поля")
 
-                if shot in field.shots:
-                    raise ShotPositionException("Вы уже стреляли по этим координатам")
+                for pass_shot in field.shots:
+                    if shot == pass_shot:
+                        raise ShotPositionException("Вы уже стреляли по этим координатам")
 
             except ShotPositionException as e:
                 print(e)
                 continue
 
             break
-        if not field.add_shot(shot):
+        ship = field.add_shot(shot)
+        if ship is False :
+            print("Мимо!")
             self.change_turn()
+        else:
+            if ship.life == 0:
+                print("Убил!")
+            else:
+                print("Ранил!")
 
     def play(self):
         self.input_ship_position()
         while not self.check_win():
             self.print_field()
             self.shooting()
+        self.print_field()
+        print("Победа {}!".format(self.players[self.turn].name))
+        input()
 
 
-game = Game()
-game.play()
+if __name__ == "__main__":
+    game = Game()
+    game.play()
