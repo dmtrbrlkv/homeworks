@@ -1,6 +1,7 @@
+import antigravity
+
 res = list(map(lambda x: x % 5, [1, 4, 5, 30, 99]))
 print(res)
-
 
 res = list(map(str, [3, 4, 90, -2]))
 print(res)
