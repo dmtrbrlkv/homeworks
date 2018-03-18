@@ -6,7 +6,7 @@ SHIP3 = 2
 SHIP2 = 3
 SHIP1 = 4
 
-EMPTY_MARK = "~"
+EMPTY_MARK = " "
 SHIP_MARK = "="
 HIT_MARK = "X"
 MISS_MARK = "o"
@@ -51,8 +51,8 @@ class Player:
                 print(e)
                 continue
             except Exception:
-                 print("Введите корректные координаты")
-                 continue
+                print("Введите корректные координаты")
+                continue
             break
 
         if begin_x > end_x:
@@ -60,6 +60,7 @@ class Player:
         if begin_y > end_y:
             begin_y, end_y = end_y, begin_y
         return begin_x, begin_y, end_x, end_y
+
 
 class Field:
     def __init__(self, size, player, *args):
@@ -151,14 +152,15 @@ class Field:
         self.str_field[shot.x - 1][shot.y - 1] = HIT_MARK if shot.hit else MISS_MARK
 
     def print_field(self):
-        line = "   " + functools.reduce(lambda x, y: x + y[-1], list(map(str, range(1, 11))))
+        line_separator = "  +---+---+---+---+---+---+---+---+---+---+"
+        line = "    " + functools.reduce(lambda x, y: x + "   " + y, list(map(str, range(1, 11))))
         print(line)
-        print("  " + "*" * (self.size + 2))
+        print(line_separator)
         for i in range(self.size):
-            line = str(i+1)[-1] + " *" + functools.reduce(lambda x, y: x + y, self.str_field[i]) + "*"
+            line = (str(i + 1) + " ")[:2] + "| " + functools.reduce(lambda x, y: x + " | " + y, self.str_field[i]) + " |"
             print(line)
-        print("  " + "*" * (self.size + 2))
-
+            print(line_separator)
+   
     def check_win(self):
         for ship in self.ships:
             if ship.life > 0:
@@ -181,7 +183,7 @@ class Field:
                     for y in range(ship.begin_y, ship.end_y + 1):
                         for dx in range(-1, 2):
                             for dy in range(-1, 2):
-                                if dx != 0 or dy !=0:
+                                if dx != 0 or dy != 0:
                                     empty_x = x + dx
                                     empty_y = y + dy
                                     if (ship.begin_x <= empty_x <= ship.end_x) and \
@@ -269,7 +271,7 @@ class Game():
                 x, y = shot.x, shot.y
                 if not (1 <= x <= field.size):
                     raise ShotPositionException("Координаты выходят за пределы поля")
-                if not(1 <= y <= field.size):
+                if not (1 <= y <= field.size):
                     raise ShotPositionException("Координаты выходят за пределы поля")
 
                 for pass_shot in field.shots:
@@ -282,7 +284,7 @@ class Game():
 
             break
         ship = field.add_shot(shot)
-        if ship is False :
+        if ship is False:
             print("Мимо!")
             self.change_turn()
         else:
